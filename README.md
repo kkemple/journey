@@ -24,7 +24,7 @@ The app can be configured to be used by only one person, or allow anyone to sign
 
 ### Deploy the back end and run the app
 
-1. Clone the repo, check out the Expo branch, & install the dependencies
+1. Clone the repo & install the dependencies
 
 ```sh
 ~ git clone https://github.com/kkemple/journey.git
