@@ -3,9 +3,22 @@
   "version": "0.1.0",
   "private": true,
   "dependencies": {
+    "@emotion/core": "^10.0.16",
+    "@emotion/styled": "^10.0.15",
+    "@reach/dialog": "^0.2.9",
+    "@reach/tabs": "^0.1.6",
+    "@rebass/emotion": "^3.2.0",
+    "@rebass/forms": "^4.0.5",
+    "aws-amplify": "^1.1.36",
+    "aws-amplify-react": "^2.3.12",
+    "formik": "^1.5.8",
+    "normalize.css": "^8.0.1",
     "react": "^16.9.0",
     "react-dom": "^16.9.0",
-    "react-scripts": "3.1.1"
+    "react-icons": "^3.7.0",
+    "react-markdown": "^4.1.0",
+    "react-scripts": "3.1.1",
+    "react-syntax-highlighter": "^11.0.2"
   },
   "scripts": {
     "start": "react-scripts start",
