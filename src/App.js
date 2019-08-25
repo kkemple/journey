@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { Auth } from "aws-amplify";
-import { Authenticator, Greetings, SignUp } from "aws-amplify-react";
+import { Authenticator } from "aws-amplify-react";
 import styled from "@emotion/styled";
 
 import awsExports from "./aws-exports";
@@ -10,12 +10,13 @@ const Title = styled("h1")`
   text-align: center;
   text-transform: uppercase;
   color: #ffffff;
+  margin-bottom: 8px;
 `;
 
 const theme = {
   formContainer: {
     margin: 0,
-    padding: "24px"
+    padding: "8px 24px 24px"
   },
   formSection: {
     backgroundColor: "#31465f",
@@ -71,7 +72,6 @@ function App() {
           }
         }}
         amplifyConfig={awsExports}
-        hide={[Greetings, SignUp]}
         theme={theme}
       />
     </>
