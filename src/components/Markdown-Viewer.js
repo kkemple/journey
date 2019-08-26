@@ -42,7 +42,7 @@ const CodeBlock = props => (
 export default props => (
   <Dialog>
     <DismissContainer>
-      <StyledButton onClick={props.dismiss}>Close</StyledButton>
+      <StyledButton onClick={props.onDismiss}>Close</StyledButton>
     </DismissContainer>
     <StyledMarkdown
       renderers={{ code: CodeBlock }}

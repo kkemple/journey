@@ -6,7 +6,6 @@
 
 ### Features
 
-- ⚡️ Real-time
 - 📝 Keep notes in Markdown
 - ❤️ Add favorites
 - 👮‍ Authenticated

@@ -112,7 +112,7 @@ const STATUSES = [
 ];
 
 export default props => (
-  <Dialog onDismiss={props.dismiss}>
+  <Dialog onDismiss={props.onDismiss}>
     <Title>{props.listing ? "Edit Job Listing" : "Track Job Listing"}</Title>
     <Formik
       initialValues={
@@ -156,22 +156,10 @@ export default props => (
         return errors;
       }}
       onSubmit={(values, { setSubmitting, resetForm }) => {
-        API.graphql(
-          graphqlOperation(props.listing ? updateListing : createListing, {
-            input: {
-              ...(props.listing || {}),
-              ...values
-            }
-          })
-        )
-          .then(() => {
-            setSubmitting(false);
-            resetForm();
-            props.dismiss && props.dismiss();
-          })
-          .catch(error => {
-            alert(error.message);
-          });
+        props.onSave(values);
+        setSubmitting(false);
+        resetForm();
+        props.onDismiss();
       }}
     >
       {({
@@ -320,10 +308,8 @@ export default props => (
           </FormInputs>
           <Actions>
             <StyledButton
-              onClick={e => {
-                e.preventDefault();
-                e.stopPropagation();
-                props.dismiss && props.dismiss();
+              onClick={() => {
+                props.onDismiss();
               }}
               style={{ marginRight: "8px" }}
             >

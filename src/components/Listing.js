@@ -1,6 +1,5 @@
 import React, { useState } from "react";
 import styled from "@emotion/styled";
-import { API, graphqlOperation } from "aws-amplify";
 import {
   FaRegEdit,
   FaRegHeart,
@@ -15,7 +14,6 @@ import {
 
 import ListingEditor from "./Listing-Editor";
 import MarkdownViewer from "./Markdown-Viewer";
-import { deleteListing, updateListing } from "../graphql/mutations";
 
 const Listing = styled("div")`
   background-color: #31465f;
@@ -186,18 +184,7 @@ export default props => {
       </ListingInfo>
 
       <ListingActions>
-        <Icon
-          onClick={() => {
-            API.graphql(
-              graphqlOperation(updateListing, {
-                input: {
-                  id: props.listing.id,
-                  favorite: !props.listing.favorite
-                }
-              })
-            );
-          }}
-        >
+        <Icon onClick={props.onFavorite}>
           {props.listing.favorite ? <FaHeart /> : <FaRegHeart />}
         </Icon>
         <Icon>
@@ -212,33 +199,24 @@ export default props => {
           <FaRegEdit />
         </Icon>
         <Icon>
-          <FaRegTrashAlt
-            onClick={() => {
-              if (window.confirm("Are you sure want to delete this listing?")) {
-                API.graphql(
-                  graphqlOperation(deleteListing, {
-                    input: { id: props.listing.id }
-                  })
-                );
-              }
-            }}
-          />
+          <FaRegTrashAlt onClick={props.onDelete} />
         </Icon>
       </ListingActions>
 
       {showEditor && (
         <ListingEditor
           listing={props.listing}
-          dismiss={() => {
+          onDismiss={() => {
             setShowEditor(false);
           }}
+          onSave={props.onSaveChanges}
         />
       )}
 
       {showMarkdown && (
         <MarkdownViewer
           markdown={props.listing.notes}
-          dismiss={() => {
+          onDismiss={() => {
             setShowMarkdown(false);
           }}
         />

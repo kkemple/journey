@@ -28,7 +28,8 @@ export default props => {
       </TrackListingContainer>
       {showDialog && (
         <ListingEditor
-          dismiss={() => {
+          onSave={props.onSave}
+          onDismiss={() => {
             setShowDialog(false);
           }}
         />

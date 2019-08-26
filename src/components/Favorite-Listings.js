@@ -5,7 +5,11 @@ import styled from "@emotion/styled";
 import Listing from "./Listing";
 import TrackListing from "./Track-Listing";
 import { listListings } from "../graphql/queries";
-import * as subscriptions from "../graphql/subscriptions";
+import {
+  createListing,
+  deleteListing,
+  updateListing
+} from "../graphql/mutations";
 
 const Container = styled("div")`
   max-width: 800px;
@@ -16,7 +20,7 @@ const Listings = styled("div")`
   margin-top: 24px;
 `;
 
-export default () => {
+export default props => {
   const [listings, setListings] = useState([]);
 
   useEffect(() => {
@@ -42,73 +46,96 @@ export default () => {
       });
   }, []);
 
-  useEffect(() => {
-    const subscription = API.graphql(
-      graphqlOperation(subscriptions.onCreateListing)
-    ).subscribe({
-      next: payload => {
-        const listing = payload.value.data.onCreateListing;
-
-        if (!listing.favorite) return;
-
-        setListings(
-          [listing, ...listings].sort((a, b) => {
-            if (a.updatedAt > b.updatedAt) return -1;
-            else return 1;
-          })
-        );
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [listings]);
-
-  useEffect(() => {
-    const subscription = API.graphql(
-      graphqlOperation(subscriptions.onUpdateListing)
-    ).subscribe({
-      next: payload => {
-        const listing = payload.value.data.onUpdateListing;
-
-        if (!listing.favorite) {
-          // in case it was unfavorited
-          setListings(listings.filter(l => l.id !== listing.id));
-          return;
-        }
-
-        setListings(listings.map(l => (l.id === listing.id ? listing : l)));
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [listings]);
-
-  useEffect(() => {
-    const subscription = API.graphql(
-      graphqlOperation(subscriptions.onDeleteListing)
-    ).subscribe({
-      next: payload => {
-        const listing = payload.value.data.onDeleteListing;
-
-        if (!listing.favorite) return;
-
-        setListings(
-          listings.filter(l => {
-            return l.id !== listing.id;
-          })
-        );
-      }
-    });
-
-    return () => subscription.unsubscribe();
-  }, [listings]);
-
   return (
     <Container>
-      <TrackListing />
+      <TrackListing
+        onSave={values => {
+          API.graphql(
+            graphqlOperation(createListing, {
+              input: values
+            })
+          ).then(result => {
+            if (values.favorite) {
+              setListings([result.data.createListing, ...listings]);
+            }
+          });
+        }}
+      />
       <Listings>
         {listings.map(listing => (
-          <Listing key={listing.id} listing={listing} />
+          <Listing
+            key={listing.id}
+            listing={listing}
+            onSaveChanges={values => {
+              API.graphql(
+                graphqlOperation(updateListing, {
+                  input: {
+                    ...listing,
+                    ...values
+                  }
+                })
+              ).then(result => {
+                if (!result.data.updateListing.favorite) {
+                  setListings(
+                    listings.filter(l => l.id !== result.data.updateListing.id)
+                  );
+                  return;
+                }
+
+                const updatedListings = listings.map(l => {
+                  if (l.id === listing.id) {
+                    return result.data.updateListing;
+                  }
+
+                  return l;
+                });
+
+                setListings(updatedListings);
+              });
+            }}
+            onFavorite={() => {
+              API.graphql(
+                graphqlOperation(updateListing, {
+                  input: {
+                    ...listing,
+                    favorite: !listing.favorite
+                  }
+                })
+              ).then(result => {
+                if (!result.data.updateListing.favorite) {
+                  setListings(
+                    listings.filter(l => l.id !== result.data.updateListing.id)
+                  );
+                  return;
+                }
+
+                const updatedListings = listings.map(l => {
+                  if (l.id === listing.id) {
+                    return result.data.updateListing;
+                  }
+
+                  return l;
+                });
+
+                setListings(updatedListings);
+              });
+            }}
+            onDelete={() => {
+              if (window.confirm("Are you sure want to delete this listing?")) {
+                API.graphql(
+                  graphqlOperation(deleteListing, {
+                    input: { id: listing.id }
+                  })
+                ).then(() => {
+                  const updatedListings = listings.filter(
+                    l => l.id !== listing.id
+                  );
+
+                  setListings(updatedListings);
+                });
+              }
+            }}
+          />
         ))}
       </Listings>
     </Container>
