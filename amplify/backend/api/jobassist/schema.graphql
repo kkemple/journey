@@ -1,4 +1,4 @@
-type Listing @model @auth(rules: [{ allow: owner }]) {
+type Listing @model(subscriptions: null) @auth(rules: [{ allow: owner }]) {
   id: ID!
   title: String!
   company: String!
