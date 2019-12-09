@@ -1,4 +1,6 @@
-# Journey - The Job Listing Tracker
+# Journey
+
+## The Job Listing Tracker
 
 #### Deploy a full stack web app to help you organize your job search.
 
